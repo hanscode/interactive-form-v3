@@ -21,7 +21,7 @@ let total = 0;
 window.addEventListener("load", () => {
     userName.focus();
     otherJobRole.style.display = "none";
-    color.setAttribute("disabled", "");
+    color.disabled = true; // Disable the color `<select>` element on page load.
 });
 
 /**
@@ -38,47 +38,32 @@ JobRole.addEventListener("change", () => {
 });
 
 /**
- * Evvent listener on the "Design" <select> element in order to:
+ * This arrow function `shirtColors` executes the following tasks dynamically:
  * - Enable The "Color" <select> element.
  * - Display an available color in the "Color" <select> element.
  * - The "Color" dropdown shows only the color options associated with the selected design.
  */
 
-design.addEventListener("change", () => {
-    const colors = color.querySelectorAll("option");
+const shirtColors = (e) => { 
+    const colors = color.children;
     const selected = color.firstElementChild;
 
-    if (design.value === "js puns" || design.value === "heart js") {
-        color.removeAttribute("disabled");
-        selected.removeAttribute("selected");
-    }
+    color.disabled = false;
+    selected.removeAttribute("selected");
 
-    colors.forEach((option) => {
-        if (design.value === "js puns") {
-            if (option.dataset.theme !== "js puns") {
-                option.setAttribute("hidden", "");
-            } else {
-                option.removeAttribute("hidden");
-                selected.nextElementSibling.setAttribute("selected", "");
-                selected.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.removeAttribute(
-                    "selected",
-                    ""
-                );
-            }
-        } else if (design.value === "heart js") {
-            if (option.dataset.theme !== "heart js") {
-                option.setAttribute("hidden", "");
-            } else {
-                option.removeAttribute("hidden");
-                selected.nextElementSibling.removeAttribute("selected", "");
-                selected.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.setAttribute(
-                    "selected",
-                    ""
-                );
-            }
+    for (let i = 0; i < colors.length; i++) {
+        let theme = e.target.value;
+        let shirt = colors[i].getAttribute('data-theme');
+
+        if (shirt == theme) {
+            colors[i].hidden = false;
+            colors[i].selected = true;
+        } else {
+            colors[i].hidden = true;
+            colors[i].selected = false;
         }
-    });
-});
+    }
+}
 
 /**
  * This arrow function `totalCost` calculates the total cost 
@@ -96,5 +81,10 @@ const totalCost = (e) => {
     activitiesCost.innerHTML = `Total: $${total}`;
 }
 
-// Event Handler for updated the total cost in real time as the user check or uncheck activities
+// Event Handlers
+
+// Listener for updating the total cost in real time as the user check or uncheck activities
 activities.addEventListener("change", totalCost);
+
+// Listener to enable the `Color` <select> element when a `Design Theme` is selected.
+design.addEventListener("change", shirtColors);
