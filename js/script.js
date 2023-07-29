@@ -9,6 +9,9 @@ const JobRole = document.getElementById("title");
 const otherJobRole = document.getElementById("other-job-role");
 const color = document.getElementById("color");
 const design = document.getElementById("design");
+const activities = document.getElementById('activities');
+const activitiesCost = document.getElementById('activities-cost');
+let total = 0;
 
 /**
  * Hide the "text field" with the id of "other-job-role" so it is not displayed when the form first loads.
@@ -76,3 +79,22 @@ design.addEventListener("change", () => {
         }
     });
 });
+
+/**
+ * This arrow function `totalCost` calculates the total cost 
+ * of the selected activities in the "Register for Activities" section.
+ */
+
+const totalCost = (e) => {
+    let activityCost = +(e.target.getAttribute('data-cost'));
+
+    if (e.target.checked) {
+        total += activityCost;
+    } else {
+        total -= activityCost;
+    }
+    activitiesCost.innerHTML = `Total: $${total}`;
+}
+
+// Event Handler for updated the total cost in real time as the user check or uncheck activities
+activities.addEventListener("change", totalCost);
