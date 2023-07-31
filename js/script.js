@@ -82,32 +82,131 @@ const totalCost = (e) => {
 // Set variables to reference the payment methods elements available.
 const payment = document.getElementById("payment");
 const creditCard = document.getElementById("credit-card");
-const payPal = document.getElementById("paypal");
-const bitCoin = document.getElementById("bitcoin");
+const paypal = document.getElementById("paypal");
+const bitcoin = document.getElementById("bitcoin");
 
 // Hide the following payment methods initially upon page load.
 paypal.style.display = "none";
-bitCoin.style.display = "none";
+bitcoin.style.display = "none";
 
 // "Credit Card" payment method selected for the user by default.
-payment.firstElementChild.nextElementSibling.setAttribute("selected", "");
+payment.firstElementChild.nextElementSibling.selected = true;
 
 // This `paymentMethod` arrow function hides all payment sections in the form’s UI except the selected one.
 const paymentMethod = (e) => {
     const payWith = e.target.value;
     paypal.style.display = "none";
-    bitCoin.style.display = "none";
+    bitcoin.style.display = "none";
     creditCard.style.display = "none";
     document.getElementById(payWith).style.display = "block";
 }
 
-// Event Handlers
+// Selecting the Required Form elements
+const form = document.querySelector('form');
+const email = document.getElementById("email");
+const cardNumber = document.getElementById('cc-num');
+const zip = document.getElementById('zip');
+const cvv = document.getElementById('cvv');
+
+/**
+ * 
+ * VALIDATORS: HELPER FUNCTIONS
+ *  
+ */
+
+function showOrHideError(show, element) {
+    // show an error notice element when show is true, hide when false
+    if (show) {
+        element.className = "not-valid";
+        element.classList.remove("valid");
+        element.parentElement.lastElementChild.style.display = "block";
+    } else {
+        element.className = "valid";
+        element.classList.remove("not-valid");
+        element.parentElement.lastElementChild.style.display = "none";
+    }
+}
+
+function nameValidator(nameField) {
+    return /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(nameField);
+}
+
+function emailValidator(emailField) {
+    return /^[^@]+@[^@.]+\.[a-z]+$/i.test(emailField);
+}
+
+function cardValidator(cardField) {
+    return /^\b\d{13,16}\b$/.test(cardField);
+}
+
+function zipValidator(zipField) {
+    return /^\b\d{5}\b$/.test(zipField);
+}
+
+function cvvValidator(cvvField) {
+    return /^\b\d{3}\b$/.test(cvvField);
+}
+
+function createHandler(validator) {
+    return function (field) {
+        const value = field.value;
+        const valid = validator(value);
+        const showError = !valid;
+        showOrHideError(showError, field);
+        return valid;
+    }
+}
+
+/**
+ * 
+ * ACCESSIBILITY: For the activities blocks
+ * 
+ */
+
+const allActivities = document.querySelectorAll('input[type="checkbox"]');
+
+allActivities.forEach(activity => {
+    activity.addEventListener("focus", e => {
+        activity.parentElement.classList.add('focus');
+    });
+    activity.addEventListener("blur", e => {
+        activity.parentElement.classList.remove('focus');
+    });
+});
+
+/**
+ * 
+ * EVENTS HANDLERS
+ * 
+ */
 
 // Listener for updating the total cost in real time as the user check or uncheck activities
 activities.addEventListener("change", totalCost);
-
 // Listener to enable the `Color` <select> element when a `Design Theme` is selected.
 design.addEventListener("change", shirtColors);
-
 // Listener to display the payment method selected by the user.
 payment.addEventListener("change", paymentMethod);
+
+// Form Validators Events
+form.addEventListener('submit', (e) => {
+
+    e.preventDefault();
+    
+    const isValidName = createHandler(nameValidator);
+    const isValidEmail = createHandler(emailValidator);
+    const isValidCard = createHandler(cardValidator);
+    const isValidZip = createHandler(zipValidator);
+    const isValidCvv = createHandler(cvvValidator);
+
+    if (!isValidName(userName)) {
+        e.preventDefault();
+    } else if (!isValidEmail(email)) {
+        e.preventDefault();
+    } else if (payment.value === 'credit-card') {
+        if (!isValidCard(cardNumber) || !isValidZip(zip) || !isValidCvv(cvv)) {
+            e.preventDefault();
+        }
+    } else {
+        // submit form
+    }
+}); 
