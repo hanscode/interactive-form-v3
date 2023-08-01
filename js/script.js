@@ -149,7 +149,7 @@ function showOrHideError(show, element) {
  */
 
 function nameValidator(nameField) {
-    return /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(nameField);
+    return /^[a-zA-Z]+\s?[a-zA-Z]*?\s?[a-zA-Z]*?$/.test(nameField);
     // This tests that there is at least a first name containing only letters, and allows for a middle and last name.
 }
 
@@ -173,6 +173,11 @@ function cvvValidator(cvvField) {
     return /^\b\d{3}\b$/.test(cvvField);
     // This tests that there is a 3 digit number without spaces.
 }
+
+/**
+ * This `activitiesValidator` function returns true/false either an array is empty or not.
+ * @param {array} arr - This parameter represents the array of elements we need to validate.
+ */
 
 function activitiesValidator(arr) {
     if (arr.length >= 1) {
@@ -289,8 +294,9 @@ const isValidEmail = createHandler(emailValidator);
 const isValidCard = createHandler(cardValidator);
 const isValidZip = createHandler(zipValidator);
 const isValidCvv = createHandler(cvvValidator);
+
 /**
- * This arrow function `isValidActivities` validates the register activities section.
+ * This arrow function `isValidActivities` validates the "Register for Activities" section.
  */
 const isValidActivities = () => {
     let userActivities = [];
@@ -346,25 +352,22 @@ form.addEventListener('submit', (e) => {
  * 
  */
 
-// Change some default error messages when the page loads
+// Change some default error messages when the page loads.
 cardNumber.parentElement.lastElementChild.textContent = "Please provide a credit card number.";
 zip.parentElement.lastElementChild.textContent = "Please provide a zip code.";
 cvv.parentElement.lastElementChild.textContent = "Please provide the CVV number / Card Security Code.";
 
-// Real-Time Error Message for Activities Section
-activities.addEventListener("change", isValidActivities);
-
-// Real-Time Error Message for Name field
+// Real-Time Error Message for Name field.
 userName.addEventListener('keyup', e => {
 
     if (!isValidName(e.target) && e.target.value !== "") {
-        e.target.parentElement.lastElementChild.textContent = "Please provide only letters.";
+        e.target.parentElement.lastElementChild.textContent = "Please enter only letters. The name can only be followed by a middle and a last name without spaces at the end.";
     } else {
         e.target.parentElement.lastElementChild.textContent = "Name field cannot be blank.";
     }
 });
 
-// Real-Time Error Message for email field
+// Real-Time Error Message for email field.
 email.addEventListener('keyup', e => {
 
     if (!isValidEmail(e.target) && e.target.value !== "") {
@@ -374,7 +377,10 @@ email.addEventListener('keyup', e => {
     }
 });
 
-// Real-Time Error Message for Credit Card Number field
+// Real-Time Error Message for Activities Section.
+activities.addEventListener("change", isValidActivities);
+
+// Real-Time Error Message for Credit Card Number field.
 cardNumber.addEventListener('keyup', e => {
 
     if (!isValidCard(e.target) && e.target.value !== "" && isNaN(e.target.value)) {
@@ -386,7 +392,7 @@ cardNumber.addEventListener('keyup', e => {
     }
 });
 
-// Real-Time Error Message for Zip Code field
+// Real-Time Error Message for Zip Code field.
 zip.addEventListener('keyup', e => {
 
     if (!isValidZip(e.target) && e.target.value !== "" && isNaN(e.target.value)) {
@@ -398,7 +404,7 @@ zip.addEventListener('keyup', e => {
     }
 });
 
-// Real-Time Error Message for CVV field
+// Real-Time Error Message for CVV field.
 cvv.addEventListener('keyup', e => {
 
     if (!isValidCvv(e.target) && e.target.value !== "" && isNaN(e.target.value)) {
