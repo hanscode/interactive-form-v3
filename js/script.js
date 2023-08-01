@@ -3,21 +3,46 @@ Treehouse Techdegree:
 FSJS Project 3 - Interactive Form
 */
 
-// Creating variables for selecting elements globally.
+/**
+ * 
+ * GLOBAL VARIABLES
+ *  
+ */
+// Basic Info Elements
 const userName = document.getElementById("name");
 const JobRole = document.getElementById("title");
 const otherJobRole = document.getElementById("other-job-role");
+// T-Shirt Section Elements
 const color = document.getElementById("color");
 const design = document.getElementById("design");
+// Set variables to reference the payment methods elements available.
+const payment = document.getElementById("payment");
+const creditCard = document.getElementById("credit-card");
+const paypal = document.getElementById("paypal");
+const bitcoin = document.getElementById("bitcoin");
+// Selecting the Required Form elements
+const form = document.querySelector('form');
+const email = document.getElementById("email");
+const cardNumber = document.getElementById('cc-num');
+const zip = document.getElementById('zip');
+const cvv = document.getElementById('cvv');
+// Activities Section elements and checkboxes
 const activities = document.getElementById('activities');
 const activitiesCost = document.getElementById('activities-cost');
+const activitiesBox = document.getElementById('activities-box');
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+
+/**
+ * 
+ * BASIC INFO
+ *  
+ */
+
 
 // When the page loads, focus the first form field: the input element for the "Name" field.
 userName.focus();
 // Hide the "text field" with the id of "other-job-role" so it is not displayed when the form loads.
 otherJobRole.style.display = "none";
-// Disable the color `<select>` element on page load.
-color.disabled = true;
 
 /**
  * Evvent listener to listen for changes on `Job Role` <select> element.
@@ -32,6 +57,14 @@ JobRole.addEventListener("change", () => {
     }
 });
 
+/**
+ * 
+ * T-SHIRT INFO
+ *  
+ */
+
+// Disable the color `<select>` element on page load.
+color.disabled = true;
 /**
  * This arrow function `shirtColors` executes the following tasks dynamically:
  * - Enable The "Color" <select> element.
@@ -61,29 +94,10 @@ const shirtColors = (e) => {
 }
 
 /**
- * This arrow function `totalCost` calculates the total cost 
- * of the selected activities in the "Register for Activities" section.
+ * 
+ * PAYMENTE INFO
+ *  
  */
-
-// The total cost of the activities variable with an initial value of 0.
-let total = 0;
-
-const totalCost = (e) => {
-    let activityCost = +(e.target.getAttribute('data-cost'));
-
-    if (e.target.checked) {
-        total += activityCost;
-    } else {
-        total -= activityCost;
-    }
-    activitiesCost.innerHTML = `Total: $${total}`;
-}
-
-// Set variables to reference the payment methods elements available.
-const payment = document.getElementById("payment");
-const creditCard = document.getElementById("credit-card");
-const paypal = document.getElementById("paypal");
-const bitcoin = document.getElementById("bitcoin");
 
 // Hide the following payment methods initially upon page load.
 paypal.style.display = "none";
@@ -101,12 +115,11 @@ const paymentMethod = (e) => {
     document.getElementById(payWith).style.display = "block";
 }
 
-// Selecting the Required Form elements
-const form = document.querySelector('form');
-const email = document.getElementById("email");
-const cardNumber = document.getElementById('cc-num');
-const zip = document.getElementById('zip');
-const cvv = document.getElementById('cvv');
+/**
+ * 
+ * VISUAL VALIDATION ERRORS
+ *  
+ */
 
 /**
  * This `showOrHideError` function will show an error notice element when a 
@@ -119,12 +132,12 @@ const cvv = document.getElementById('cvv');
 function showOrHideError(show, element) {
     // show an error notice element when show is true, hide when false
     if (show) {
-        element.className = "not-valid";
-        element.classList.remove("valid");
+        element.parentElement.classList.add("not-valid");
+        element.parentElement.classList.remove("valid");
         element.parentElement.lastElementChild.style.display = "block";
     } else {
-        element.className = "valid";
-        element.classList.remove("not-valid");
+        element.parentElement.classList.add("valid");
+        element.parentElement.classList.remove("not-valid");
         element.parentElement.lastElementChild.style.display = "none";
     }
 }
@@ -161,6 +174,14 @@ function cvvValidator(cvvField) {
     // This tests that there is a 3 digit number without spaces.
 }
 
+function activitiesValidator(arr) {
+    if (arr.length >= 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 /**
  * This `createHandler` function creates a reusable module pattern to validate form fields.
  *
@@ -179,15 +200,20 @@ function createHandler(validator) {
 
 /**
  * 
- * ACCESSIBILITY: In regards to the activities checkboxes.
+ * REGISTER FOR ACTIVITIES
+ * 
+ * - Accessibility.
+ * - Conflicting Activity Times.
+ * - Activity Cost Calculator.
+ * - Activity Visual Validation Error.
  * 
  */
 
-// This variable represents all the activities checkboxes (array)
-const allActivities = document.querySelectorAll('input[type="checkbox"]');
-
-// Loop for each activity `checkbox input` element to listen for the `focus` and `blur` event.
-allActivities.forEach(activity => {
+/**
+ * Accessibility:
+ * Loop for each activity `checkbox input` element to listen for the `focus` and `blur` event.
+ */
+checkboxes.forEach(activity => {
     activity.addEventListener("focus", e => {
         activity.parentElement.classList.add('focus');
     });
@@ -195,6 +221,61 @@ allActivities.forEach(activity => {
         activity.parentElement.classList.remove('focus');
     });
 });
+
+/**
+ * Conflicting Activity Times:
+ * This arrow function `activityTime` prevents any conflicting activity times avoiding users  
+ * from selecting activities that occur at the same time.
+ */
+
+const activityTimes = (e) => {
+    // Variable to store the checkbox input that was just clicked
+    const clicked = e.target;
+
+    // Variable to store the `data-day-and-time` attribute of the checkbox that was just clicked
+    const clickedType = clicked.getAttribute('data-day-and-time');
+
+    // Loop over the checkbox input elements
+    for (let i = 0; i < checkboxes.length; i++) {
+        const checkboxType = checkboxes[i].getAttribute('data-day-and-time');
+
+        // `if` statement to disable/enable the checkboxes activities
+        if (checkboxType === clickedType && clicked !== checkboxes[i]) {
+            //`if/else` statement to check if the clicked checkbox is checked or unchecked
+            if (clicked.checked) {
+                // If is checked, then disable the elements with the same `data-day-and-time` value 
+                // than the checkbox that was just checked.
+                checkboxes[i].disabled = true;
+            } else {
+                // Otherwise, if the checkbox is unchecked, enable the elements with 
+                // the same `data-day-and-time` value than the checkbox that was just unchecked.
+                checkboxes[i].disabled = false;
+            }
+        }
+    }
+    // Add the `.disabled` style class for checkbox parent labels
+    [...checkboxes].forEach(cb => (cb.disabled) ? cb.parentElement.classList.add('disabled') : cb.parentElement.classList.remove('disabled'));
+}
+
+/**
+ * Activity Cost Calculator:
+ * This arrow function `totalCost` calculates the total cost 
+ * of the selected activities in the "Register for Activities" section.
+ */
+
+// The total cost of the activities variable with an initial value of 0.
+let total = 0;
+
+const totalCost = (e) => {
+    let activityCost = +(e.target.getAttribute('data-cost'));
+
+    if (e.target.checked) {
+        total += activityCost;
+    } else {
+        total -= activityCost;
+    }
+    activitiesCost.innerHTML = `Total: $${total}`;
+}
 
 /**
  * 
@@ -208,9 +289,26 @@ const isValidEmail = createHandler(emailValidator);
 const isValidCard = createHandler(cardValidator);
 const isValidZip = createHandler(zipValidator);
 const isValidCvv = createHandler(cvvValidator);
+/**
+ * This arrow function `isValidActivities` validates the register activities section.
+ */
+const isValidActivities = () => {
+    let userActivities = [];
+    checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+            userActivities.push(checkbox);
+        }
+    });
+    const status = activitiesValidator(userActivities);
+    const activitiesError = !status;
+    showOrHideError(activitiesError, activitiesBox);
+    return status;
+}
 
 // Listener for updating the total cost in real time as the user check or uncheck activities
 activities.addEventListener("change", totalCost);
+// Listener for avoding user from selecting activities that occur at the same time.
+activities.addEventListener("change", activityTimes);
 // Listener to enable the `Color` <select> element when a `Design Theme` is selected.
 design.addEventListener("change", shirtColors);
 // Listener to display the payment method selected by the user.
@@ -229,13 +327,13 @@ form.addEventListener('submit', (e) => {
         } else {
             email.parentElement.lastElementChild.textContent = "Please provide an email address.";
         }
+    } else if (!isValidActivities()) {
+        e.preventDefault();
     } else if (payment.value === 'credit-card') {
         // Check if Credit Card Payment Method is selected. if it's so, excute the following conditions
-
         if (!isValidCard(cardNumber) || !isValidZip(zip) || !isValidCvv(cvv)) {
             e.preventDefault();
         }
-
     } else {
         // submit form
     }
@@ -245,14 +343,16 @@ form.addEventListener('submit', (e) => {
  * 
  * REAL TIME ERROR MESSAGES:
  * Providing form validation error indications at the moment they occur to better serve users.
+ * 
  */
 
-// Change some default error messages web the page loads
+// Change some default error messages when the page loads
 cardNumber.parentElement.lastElementChild.textContent = "Please provide a credit card number.";
 zip.parentElement.lastElementChild.textContent = "Please provide a zip code.";
 cvv.parentElement.lastElementChild.textContent = "Please provide the CVV number / Card Security Code.";
 
-
+// Real-Time Error Message for Activities Section
+activities.addEventListener("change", isValidActivities);
 
 // Real-Time Error Message for Name field
 userName.addEventListener('keyup', e => {
@@ -281,7 +381,7 @@ cardNumber.addEventListener('keyup', e => {
         e.target.parentElement.lastElementChild.textContent = "It looks like you're trying to use a type of credit card we don't accept.";
     } else if (!isValidCard(e.target) && e.target.value !== "" && !isNaN(e.target.value)) {
         e.target.parentElement.lastElementChild.textContent = "Credit card number must be between 13 - 16 digits";
-    }else {
+    } else {
         e.target.parentElement.lastElementChild.textContent = "Please provide a credit card number.";
     }
 });
