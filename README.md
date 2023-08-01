@@ -3,7 +3,7 @@
 Author - Hans Steffens
 
 ## Project Overview
-In this project, I'll use JavaScript to enhance an interactive registration form for a fictional Full Stack conference.
+In this project, I've used JavaScript to enhance an interactive registration form for a fictional Full Stack conference.
 
 ## Features
 Using the supplied HTML and CSS files, I've added JavaScript to make the form more user-friendly by:
