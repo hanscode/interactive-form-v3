@@ -6,9 +6,9 @@ Author - Hans Steffens
 In this project, I'll use JavaScript to enhance an interactive registration form for a fictional Full Stack conference.
 
 ## Features
-Using the supplied HTML and CSS files, I'll add JavaScript to make the form more user-friendly by:
+Using the supplied HTML and CSS files, I've added JavaScript to make the form more user-friendly by:
 
-- Adding customized and conditional behavior and interactivity.
+- Conditional behavior and interactivity.
 - Real Time Messages: This app provides form validation error indications at the moment they occur to better user experience. For example:
     - Name Field:  As the user is typing if an error occur, an error notices is displayed. If numbers are provided the error messahe will be "_Provide only letters..._". Also, the same message provide additional guidence in case the name must be formatted correclty, for instance, only middle and last name are allowed, nothing else. So the full messages will be: "_Please enter only letters. The name can only be followed by a middle and a last name without spaces at the end._"
     - Email Field: While the user is typing a notice is displayed regarding the right email format until the email is formatted correctly.
