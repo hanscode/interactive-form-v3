@@ -323,9 +323,13 @@ payment.addEventListener("change", paymentMethod);
 // Form Validators Events
 form.addEventListener('submit', (e) => {
 
+    // if Name field is blank or invalid, prevent submit and then show the error.
     if (!isValidName(userName)) {
         e.preventDefault();
-    } else if (!isValidEmail(email)) {
+    }
+
+    // if the email field is empty or invalid, then prevent submit and show the helper message.
+    if (!isValidEmail(email)) {
         e.preventDefault();
         // Valid Email: Error Notice Conditions
         if (email.value !== "") {
@@ -333,15 +337,28 @@ form.addEventListener('submit', (e) => {
         } else {
             email.parentElement.lastElementChild.textContent = "Please provide an email address.";
         }
-    } else if (!isValidActivities()) {
+    }
+
+    // If no activity is checked, so prevent submit and display an error notice.
+    if (!isValidActivities()) {
         e.preventDefault();
-    } else if (payment.value === 'credit-card') {
-        // Check if Credit Card Payment Method is selected. if it's so, excute the following conditions
-        if (!isValidCard(cardNumber) || !isValidZip(zip) || !isValidCvv(cvv)) {
+    }
+
+    if (payment.value === 'credit-card') {
+        // Check if Credit Card Payment Method is selected. if it's so, excute the following conditions:
+
+        // If one of the payment required fields such as Zip, CVV or Card Number, is empty or has not the correct format, 
+        // then prevent submit and show the respective error messages according to the field.
+
+        if (!isValidCard(cardNumber)) {
             e.preventDefault();
         }
-    } else {
-        // submit form
+        if (!isValidZip(zip)) {
+            e.preventDefault();
+        }
+        if (!isValidCvv(cvv)) {
+            e.preventDefault();
+        }
     }
 });
 
